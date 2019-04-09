@@ -1,19 +1,19 @@
-import pandas as pd
-import torch
-from torch.utils.data import Dataset
-from sklearn.utils import shuffle
-import re
-from bpemb import BPEmb
-from tqdm import tqdm
 import sys
+
+import pandas as pd
+import re
+import torch
+from bpemb import BPEmb
+from sklearn.utils import shuffle
+from torch.utils.data import Dataset
+
 sys.path.append('..')
-import glob
 import config
-import pyarrow.parquet as pq
 
 
 class StatusDataset(Dataset):
-	def __init__(self, mode='train'):
+	def __init__(self, path=config.path_to_data, mode='train'):
+		self.path_to_data = path
 		self.mode = mode
 		print(f"Loading {self.mode} data...")
 		self.data = self.read_data()
@@ -22,10 +22,10 @@ class StatusDataset(Dataset):
 		self.placeholder = torch.zeros(config.max_seq_length, dtype = torch.long)
 
 	def read_data(self):
-		data = pd.read_csv('data/data.csv')
+		data = pd.read_csv(self.path_to_data)
 		if self.mode == 'train':
 			data = data[data.isTest == 0][['text_orig', 'label']]
-		else:
+		elif self.mode == 'val':
 			data = data[data.isTest == 1][['text_orig', 'label']]
 		return data
 
