@@ -7,7 +7,7 @@ Text classification models
 ```
 python train.py
 ```
-4. Run train:
+4. Run test:
 ```
 python test.py
 ```
