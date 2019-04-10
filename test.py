@@ -1,23 +1,17 @@
-import os
-import shutil
 import torch
-import torch.optim as optim
 import tqdm
-from tensorboardX import SummaryWriter
-from torch.optim.lr_scheduler import ExponentialLR
 from torch.utils.data import DataLoader
 
 import config
-from Dataset.dataset import StatusDataset
-from model.dan import DAN, init_weights
+from dataset.dataset import StatusDataset
+from model.dan import DAN
 from model.transformer import Net
-from utils.loss import FocalLoss2
 from utils.scores import calculate_score
 
 if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     test_dataset = StatusDataset(path=config.path_to_test_data, mode='test')
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=8)
+    test_loader = DataLoader(test_dataset, batch_size=100, shuffle=False, num_workers=8)
 
     if config.network_type.lower() == "transformer":
         easynet = Net(embeddings=torch.tensor(test_dataset.bpemb_ru.emb.vectors)).to(device)
@@ -26,7 +20,7 @@ if __name__ == '__main__':
     else:
         raise ("Error: {} is not implement".format(config.network_type))
 
-    easynet.load_state_dict(torch.load(config.path_to_save_model))
+    easynet.load_state_dict(torch.load(config.path_to_load_model))
     easynet.eval()
 
     test_bar = tqdm.tqdm(test_loader)
@@ -41,6 +35,15 @@ if __name__ == '__main__':
         y_true += label.data.cpu().numpy().squeeze().tolist()
 
     aucROC, f1, eer, aucPR = calculate_score(y_true, y_pred)
+
+
+    '''
+    ROC_AUC score = 0.8830249036925899
+    F1 score = 0.6439957492029756
+    EER score - 0.19475187433059676
+    Average precision score: 0.69
+    AUC PR 0.686686019079537
+    '''
 
 
 

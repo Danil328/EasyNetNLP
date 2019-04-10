@@ -140,7 +140,7 @@ class Net(nn.Module):
         x = x.mean(dim=1)
         x = F.elu(self.linear1(x))
         x = self.bn(x)
-        x = F.sigmoid(self.linear2(x))
+        x = torch.sigmoid(self.linear2(x))
         return x
 
     def get_pos_onehot(self):

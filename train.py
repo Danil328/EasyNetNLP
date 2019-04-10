@@ -8,7 +8,7 @@ from torch.optim.lr_scheduler import ExponentialLR
 from torch.utils.data import DataLoader
 
 import config
-from Dataset.dataset import StatusDataset
+from dataset.dataset import StatusDataset
 from model.dan import DAN, init_weights
 from model.transformer import Net
 from utils.loss import FocalLoss2
@@ -27,7 +27,6 @@ if __name__ == '__main__':
     elif config.network_type.lower() == "dan":
         easynet = DAN(emb_weights=torch.tensor(train_dataset.bpemb_ru.emb.vectors)).to(device)
         init_weights(easynet, init_type='normal', scale=0.1)
-
     else:
         raise ("Error: {} is not implement".format(config.network_type))
 
@@ -86,6 +85,6 @@ if __name__ == '__main__':
 
         scheduler.step()
 
-        torch.save(easynet.state_dict(), config.path_to_save_model + 'epoch_{}'.format(epoch+1) + '.h5')
+        torch.save(easynet.state_dict(), config.path_to_save_model + '_epoch_{}'.format(epoch+1) + '.h5')
 
 
