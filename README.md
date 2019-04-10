@@ -2,11 +2,12 @@
 Text classification models
 
 1. Update config.py
-2. Run train:
+2. cd src
+3. Run train:
 ```
 python train.py
 ```
-3. Run train:
+4. Run train:
 ```
 python test.py
 ```
